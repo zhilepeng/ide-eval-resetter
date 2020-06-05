@@ -21,11 +21,12 @@ intellij {
 
     version "2020.1.2"
     type "IU"
-
-    updateSinceUntilBuild false
 }
 
 patchPluginXml {
     changeNotes """
     release v1.0.0"""
+
+    sinceBuild "162"
+    untilBuild null
 }
