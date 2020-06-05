@@ -9,4 +9,4 @@
 
 ### Alternative
 
-* Or run script in the `reset_eval` folder directly.
+* Or run script in the [reset_eval](https://github.com/pengzhile/ide-eval-resetter/tree/master/reset_eval) folder directly.
