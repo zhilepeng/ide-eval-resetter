@@ -1,0 +1,24 @@
+<idea-plugin>
+    <id>io.zhile.research.ide-eval-resetter</id>
+    <name>ide-eval-resetter</name>
+    <vendor url="https://zhile.io">zhile.io</vendor>
+
+    <description><![CDATA[
+    I can reset your IDE eval information.<br>
+    <em>Click "Help" menu and select "Reset IDE Eval"</em>
+    ]]></description>
+
+    <depends>com.intellij.modules.lang</depends>
+
+    <actions>
+        <action class="io.zhile.research.intellij.action.ResetAction" id="io.zhile.research.intellij.action.ResetAction">
+            <add-to-group group-id="HelpMenu" anchor="last"/>
+            <add-to-group group-id="WelcomeScreen.Documentation" anchor="last"/>
+        </action>
+    </actions>
+    <application-components>
+        <component>
+            <implementation-class>io.zhile.research.intellij.MainComponent</implementation-class>
+        </component>
+    </application-components>
+</idea-plugin>
