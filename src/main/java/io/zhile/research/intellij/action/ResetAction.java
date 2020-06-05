@@ -4,7 +4,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
@@ -27,10 +26,8 @@ public class ResetAction extends AnAction {
     private static final String OLD_MACHINE_ID_KEY = "JetBrains.UserIdOnMachine";
     private static final String DEFAULT_COMPANY_NAME = "jetbrains";
 
-    private static final String PRODUCT_NAME = ApplicationNamesInfo.getInstance().getProductName();
-
     public ResetAction() {
-        super("Reset " + PRODUCT_NAME + "'s Eval", "Reset my IDE eval information", AllIcons.General.Reset);
+        super("Reset " + Constants.PRODUCT_NAME + "'s Eval", "Reset my IDE eval information", AllIcons.General.Reset);
     }
 
     @Override
@@ -54,7 +51,7 @@ public class ResetAction extends AnAction {
         prefs.remove(NEW_MACHINE_ID_KEY);
         prefs.remove(DEVICE_ID_KEY);
 
-        Preferences.userRoot().node(Constants.PLUGIN_NAME).put(Constants.RESET_TIME_KEY, Long.toString(System.currentTimeMillis()));
+        Preferences.userRoot().node(Constants.PLUGIN_NAME).put(Constants.PRODUCT_NAME + Constants.RESET_TIME_KEY, Long.toString(System.currentTimeMillis()));
 
         if (appInfo.isVendorJetBrains() && SystemInfo.isWindows) {
             String[] names = new String[]{"PermanentUserId", "PermanentDeviceId"};

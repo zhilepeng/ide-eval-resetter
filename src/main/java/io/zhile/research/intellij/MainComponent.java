@@ -19,7 +19,7 @@ public class MainComponent implements ApplicationComponent {
 
     public void initComponent() {
         Preferences prefs = Preferences.userRoot().node(Constants.PLUGIN_NAME);
-        long lastResetTime = prefs.getLong(Constants.RESET_TIME_KEY, 0L);
+        long lastResetTime = prefs.getLong(Constants.PRODUCT_NAME + Constants.RESET_TIME_KEY, 0L);
 
 
         new Timer().schedule(new TimerTask() {
