@@ -4,3 +4,9 @@
 2. Click `Help` or `Get Help` -> `Reset IDE Eval` menu.
 3. Restart your IDE.
 4. Now you have another 30 days eval time :)
+
+------------------------------------------
+
+### Alternative
+
+* Or run script in the `reset_eval` folder directly.
