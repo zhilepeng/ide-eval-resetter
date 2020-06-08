@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # reset jetbrains ide evals
 
 OS_NAME=$(uname -s)
