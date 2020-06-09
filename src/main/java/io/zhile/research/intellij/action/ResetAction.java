@@ -8,7 +8,6 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.MessageDialogBuilder;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,11 +17,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 public class ResetAction extends AnAction {
-    private static final String DEVICE_ID_KEY = "device_id";
-    private static final String NEW_MACHINE_ID_KEY = "user_id_on_machine";
     private static final String OLD_MACHINE_ID_KEY = "JetBrains.UserIdOnMachine";
     private static final String DEFAULT_COMPANY_NAME = "jetbrains";
 
@@ -45,13 +43,16 @@ public class ResetAction extends AnAction {
 
         String companyName = appInfo.getShortCompanyName();
         String node = StringUtil.isEmptyOrSpaces(companyName) ? DEFAULT_COMPANY_NAME : companyName.toLowerCase();
-        Preferences prefs = Preferences.userRoot().node(node);
 
-        Preferences.userRoot().remove(OLD_MACHINE_ID_KEY);
-        prefs.remove(NEW_MACHINE_ID_KEY);
-        prefs.remove(DEVICE_ID_KEY);
+        try {
+            Preferences.userRoot().remove(OLD_MACHINE_ID_KEY);
+            Preferences.userRoot().node(node).removeNode();
+        } catch (BackingStoreException e) {
+            NotificationHelper.showError(project, e.getMessage());
+            return;
+        }
 
-        Preferences.userRoot().node(Constants.PLUGIN_NAME).put(Constants.PRODUCT_NAME + Constants.RESET_TIME_KEY, Long.toString(System.currentTimeMillis()));
+        Preferences.userRoot().node(Constants.PLUGIN_NAME).put(Constants.PRODUCT_NAME + Constants.PRODUCT_HASH, Long.toString(System.currentTimeMillis()));
 
         if (appInfo.isVendorJetBrains() && SystemInfo.isWindows) {
             String[] names = new String[]{"PermanentUserId", "PermanentDeviceId"};
@@ -61,13 +62,12 @@ public class ResetAction extends AnAction {
                 }
 
                 NotificationHelper.showError(project, "Remove " + name + " file failed!");
+                return;
             }
         }
 
-        MessageDialogBuilder.YesNo dialog = MessageDialogBuilder.yesNo(Constants.PLUGIN_NAME, "Reset successfully!\nWould you like to restart your IDE?");
-        if (dialog.isYes()) {
-            ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().exit(true, false, true));
-        }
+        NotificationHelper.showInfo(project, "Reset successfully!\nPlease restart your IDE and enjoy it!");
+        ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().restart());
     }
 
     @Override

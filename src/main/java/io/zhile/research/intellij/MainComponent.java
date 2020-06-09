@@ -6,6 +6,7 @@ import com.intellij.openapi.components.ApplicationComponent;
 import io.zhile.research.intellij.action.ResetAction;
 import io.zhile.research.intellij.helper.Constants;
 import io.zhile.research.intellij.helper.NotificationHelper;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -19,8 +20,7 @@ public class MainComponent implements ApplicationComponent {
 
     public void initComponent() {
         Preferences prefs = Preferences.userRoot().node(Constants.PLUGIN_NAME);
-        long lastResetTime = prefs.getLong(Constants.PRODUCT_NAME + Constants.RESET_TIME_KEY, 0L);
-
+        long lastResetTime = prefs.getLong(Constants.PRODUCT_NAME + Constants.PRODUCT_HASH, 0L);
 
         new Timer().schedule(new TimerTask() {
             @Override
@@ -54,5 +54,16 @@ public class MainComponent implements ApplicationComponent {
 
             new Timer().schedule(new ResetTimerTask(lastResetTime), 3600000); // 60 min
         }
+    }
+
+    @Override
+    public void disposeComponent() {
+        // for compatibility
+    }
+
+    @Override
+    public @NotNull
+    String getComponentName() {
+        return getClass().getName(); // for compatibility
     }
 }

@@ -1,5 +1,6 @@
 package io.zhile.research.intellij.helper;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
@@ -8,7 +9,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
 public class NotificationHelper {
-    public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup(Constants.PLUGIN_ID.getIdString(), NotificationDisplayType.BALLOON, true);
+    public static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup(Constants.PLUGIN_ID.getIdString(), NotificationDisplayType.BALLOON, true, null, AllIcons.General.Reset);
 
     public static Notification show(@Nullable Project project, String title, String subtitle, String content, NotificationType type) {
         if (title == null) {
