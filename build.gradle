@@ -25,7 +25,8 @@ intellij {
 
 patchPluginXml {
     changeNotes """
-    release v1.0.0"""
+    release v1.0.2
+      1. compatibility fix"""
 
     sinceBuild "162"
     untilBuild null
