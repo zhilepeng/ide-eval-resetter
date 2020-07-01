@@ -16,12 +16,16 @@ import io.zhile.research.intellij.helper.NotificationHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.prefs.BackingStoreException;
+import java.util.Scanner;
 import java.util.prefs.Preferences;
 
 public class ResetAction extends AnAction {
     private static final String OLD_MACHINE_ID_KEY = "JetBrains.UserIdOnMachine";
+    private static final String NEW_MACHINE_ID_KEY = "user_id_on_machine";
+    private static final String DEVICE_ID_KEY = "device_id";
     private static final String DEFAULT_COMPANY_NAME = "jetbrains";
 
     public ResetAction() {
@@ -39,18 +43,35 @@ public class ResetAction extends AnAction {
             }
         }
 
+        File optionsFile = getOptionsFile();
+        if (optionsFile.exists()) {
+            try (Scanner scanner = new Scanner(optionsFile)) {
+                StringBuilder sbContent = new StringBuilder();
+                while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    if (!line.contains("name=\"evlsprt")) {
+                        sbContent.append(line).append("\n");
+                    }
+                }
+
+                Files.write(Paths.get(optionsFile.toURI()), sbContent.toString().getBytes());
+            } catch (IOException e) {
+                NotificationHelper.showError(project, e.getMessage());
+                return;
+            }
+        }
+
         ApplicationInfoEx appInfo = ApplicationInfoImpl.getShadowInstance();
 
         String companyName = appInfo.getShortCompanyName();
         String node = StringUtil.isEmptyOrSpaces(companyName) ? DEFAULT_COMPANY_NAME : companyName.toLowerCase();
 
-        try {
-            Preferences.userRoot().remove(OLD_MACHINE_ID_KEY);
-            Preferences.userRoot().node(node).removeNode();
-        } catch (BackingStoreException e) {
-            NotificationHelper.showError(project, e.getMessage());
-            return;
-        }
+        Preferences prefsRoot = Preferences.userRoot();
+        Preferences prefs = prefsRoot.node(node);
+
+        prefsRoot.remove(OLD_MACHINE_ID_KEY);
+        prefs.remove(NEW_MACHINE_ID_KEY);
+        prefs.remove(DEVICE_ID_KEY);
 
         Preferences.userRoot().node(Constants.PLUGIN_NAME).put(Constants.PRODUCT_NAME + Constants.PRODUCT_HASH, Long.toString(System.currentTimeMillis()));
 
@@ -90,5 +111,11 @@ public class ResetAction extends AnAction {
         String configPath = PathManager.getConfigPath();
 
         return new File(configPath, "eval");
+    }
+
+    protected File getOptionsFile() {
+        String configPath = PathManager.getConfigPath();
+
+        return new File(new File(configPath, "options"), "other.xml");
     }
 }

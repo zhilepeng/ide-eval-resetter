@@ -1,3 +1,4 @@
+' reset jetbrains ide evals v1.0.4
 Set oShell = CreateObject("WScript.Shell")
 Set oFS = CreateObject("Scripting.FileSystemObject")
 sHomeFolder = oShell.ExpandEnvironmentStrings("%USERPROFILE%")
@@ -9,26 +10,43 @@ re.IgnoreCase = True
 re.Pattern    = "\.?(IntelliJIdea|GoLand|CLion|PyCharm|DataGrip|RubyMine|AppCode|PhpStorm|WebStorm|Rider).*"
 
 Sub removeEval(ByVal file, ByVal sEvalPath)
-	bMatch = re.Test(file.Name)
+    bMatch = re.Test(file.Name)
     If Not bMatch Then
-		Exit Sub
-	End If
+        Exit Sub
+    End If
 
-	If oFS.FolderExists(sEvalPath) Then
-		oFS.DeleteFolder sEvalPath, True 
-	End If
+    If oFS.FolderExists(sEvalPath) Then
+        oFS.DeleteFolder sEvalPath, True
+    End If
+
+    content = ""
+    otherFile = oFS.GetParentFolderName(sEvalPath) + "\options\other.xml"
+    If oFS.FileExists(otherFile) Then
+        Set txtStream = oFS.OpenTextFile(otherFile, 1, False)
+        Do While Not txtStream.AtEndOfStream
+            line = txtStream.ReadLine
+            If InStr(line, "name=""evlsprt") = 0 Then
+                content = content + line + vbLf
+            End If
+        Loop
+        txtStream.Close
+
+        Set txtStream = oFS.OpenTextFile(otherFile, 2, False)
+        txtStream.Write content
+        txtStream.Close
+    End If
 End Sub
 
 If oFS.FolderExists(sHomeFolder) Then
-	For Each oFile In oFS.GetFolder(sHomeFolder).SubFolders
-    	removeEval oFile, sHomeFolder + "\" + oFile.Name + "\config\eval"
-	Next
+    For Each oFile In oFS.GetFolder(sHomeFolder).SubFolders
+        removeEval oFile, sHomeFolder + "\" + oFile.Name + "\config\eval"
+    Next
 End If
 
 If oFS.FolderExists(sJBDataFolder) Then
-	For Each oFile In oFS.GetFolder(sJBDataFolder).SubFolders
-	    removeEval oFile, sJBDataFolder + "\" + oFile.Name + "\eval"
-	Next
+    For Each oFile In oFS.GetFolder(sJBDataFolder).SubFolders
+        removeEval oFile, sJBDataFolder + "\" + oFile.Name + "\eval"
+    Next
 End If
 
 On Error Resume Next
