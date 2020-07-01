@@ -83,7 +83,7 @@ public class ResetAction extends AnAction {
 
         File dir = Paths.get(appData, "JetBrains", fileName).toFile();
 
-        return dir.delete();
+        return !dir.exists() || dir.delete();
     }
 
     protected File getEvalFile() {
