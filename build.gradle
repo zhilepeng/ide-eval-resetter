@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'io.zhile.research.intellij'
-version '1.0.2'
+version '1.0.3'
 
 repositories {
     mavenCentral()
@@ -25,6 +25,8 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+    release v1.0.3
+      1. bug fix
     release v1.0.2
       1. compatibility fix"""
 
